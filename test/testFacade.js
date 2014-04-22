@@ -76,5 +76,11 @@ describe("Facade", function () {
             expect(mockCore.on.calls[0].args).to.have.property(0, 'a');
             expect(mockCore.on.calls[1].args).to.have.property(0, 'b');
         });
+        it("adds the facade as a property of the handler", function () {
+            var facade = new Facade(mockCore.mock, [], ['a']);
+            facade.on('a', function () {});
+            expect(mockCore.on.calls[0].args[1])
+                .to.have.property('facade', facade);
+        });
     });
 });
