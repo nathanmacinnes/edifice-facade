@@ -1,8 +1,8 @@
 {
   "name": "edifice-facade",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create facades to separate modules in your application",
-  "main": "lib/edifice-facade.js",
+  "main": "lib/facade.js",
   "scripts": {
     "test": "grunt test"
   },
@@ -29,6 +29,7 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-mocha-test": "~0.10.2",
     "grunt-contrib-watch": "~0.6.1",
-    "jshint": "~2.5.0"
+    "jshint": "~2.5.0",
+    "clone": "~0.1.11"
   }
 }
