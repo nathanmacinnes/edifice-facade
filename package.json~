@@ -2,7 +2,11 @@
   "name": "edifice-facade",
   "version": "0.2.0",
   "description": "Create facades to separate modules in your application",
+<<<<<<< HEAD
+  "main": "lib/edifice-facade.js",
+=======
   "main": "lib/facade.js",
+>>>>>>> 19c74086cfda07cf16491d82a6e5af29ebdf8899
   "scripts": {
     "test": "grunt test"
   },
