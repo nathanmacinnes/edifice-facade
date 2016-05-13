@@ -23,12 +23,12 @@ describe("Facade", function () {
       expect(coreListener.calls).to.have.length(1);
     });
     it("passes arguments to the core", function () {
-      var eventData = [{}, {}, {}],
+      var args = [{}, [], 'f'],
         facade = new Facade(core);
-      facade.emit("a", eventData[0], eventData[1], eventData[2]);
-      expect(coreListener.calls[0].args[0]).to.equal(eventData[0]);
-      expect(coreListener.calls[0].args[1]).to.equal(eventData[1]);
-      expect(coreListener.calls[0].args[2]).to.equal(eventData[2]);
+      facade.emit("a", args[0], args[1], args[2]);
+      expect(coreListener.calls[0].args).to.have.property(0, args[0])
+        .and.to.have.property(1, args[1])
+        .and.to.have.property(2, args[2]);
     });
     it("throws an error when events aren't in the emit array", function () {
       var facade = new Facade(core, {
