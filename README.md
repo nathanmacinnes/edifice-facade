@@ -38,7 +38,7 @@ const dbFacade = new Facade(core);
 const uiFacade = new Facade(core);
 ````
 
-But we don't want the database module firing an `"alertuser"` event. We create
+But we don't want the database module firing an `alertuser` event. We create
 internal application security with permissions.
 
 ````js

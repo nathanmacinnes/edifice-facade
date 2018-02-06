@@ -1,10 +1,10 @@
 {
   "name": "edifice-facade",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Create facades to separate modules in your application",
   "main": "lib/facade.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt"
   },
   "repository": {
     "type": "git",

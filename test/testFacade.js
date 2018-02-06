@@ -17,6 +17,10 @@ describe("Facade", () => {
     Facade = injectr("../lib/facade.js").Facade;
   });
   describe("#emit", () => {
+    it("is chainable", () => {
+      const facade = new Facade(core);
+      expect(facade.emit("a")).to.equal(facade);
+    });
     it("passes events to the core", () => {
       const facade = new Facade(core);
       facade.emit("a");
@@ -49,6 +53,10 @@ describe("Facade", () => {
     });
   });
   describe("#on", () => {
+    it("is chainable", () => {
+      const facade = new Facade(core);
+      expect(facade.on("a")).to.equal(facade);
+    });
     it("listens for events on the core", () => {
       const facade = new Facade(core);
       facade.on("b", listener.mock);
