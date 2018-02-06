@@ -93,18 +93,4 @@ describe("Facade", () => {
       }).not.to.throwError();
     });
   });
-  describe("pair of facades", () => {
-    it("will pass all arguments between them", () => {
-      const
-        args = [{}, [], "3"],
-        facades = [new Facade(core), new Facade(core)];
-      facades[0].on("a", listener.mock);
-      facades[1].emit("a", args[0], args[1], args[2]);
-      expect(listener.calls[0].args)
-        .to.have.length(3)
-        .and.to.have.property(0, args[0])
-        .and.to.have.property(1, args[1])
-        .and.to.have.property(2, args[2]);
-    });
-  });
 });
