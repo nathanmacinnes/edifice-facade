@@ -22,13 +22,15 @@
     "url": "https://github.com/nathanmacinnes/edifice-facade/issues"
   },
   "devDependencies": {
-    "expect.js": "~0.3.1",
-    "grunt": "~0.4.4",
-    "pretendr": "~0.5.2",
-    "injectr": "~0.5.1",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-mocha-test": "~0.10.2",
-    "grunt-contrib-watch": "~0.6.1",
-    "jshint": "~2.5.0"
+    "expect.js": "^0.3.1",
+    "grunt": "^1.0.1",
+    "grunt-jscs": "^3.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-mocha-test": "^0.12.7",
+    "injectr": "^0.5.1",
+    "jshint": "^2.9.2",
+    "mocha": "^2.4.5",
+    "pretendr": "^0.6.2"
   }
 }

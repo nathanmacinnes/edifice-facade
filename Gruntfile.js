@@ -1,47 +1,62 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   // Project configuration.
-    grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
-        mochaTest: {
-            test: {
-                options: {
-                    reporter: 'spec'
-                },
-                src: ['test/*.js']
-            }
+  grunt.initConfig({
+    pkg : grunt.file.readJSON("package.json"),
+    mochaTest : {
+      test : {
+        options : {
+          reporter : "spec"
         },
-        jshint : {
-            core : ['Gruntfile.js'],
-            test : ['test/*.js'],
-            lib : ['lib/*.js'],
-            options : {
-                jshintrc : true
-            }
-        },
-        watch : {
-            lib : {
-                files : ['lib/*.js'],
-                tasks : ['jshint:lib', 'test']
-            },
-            test : {
-                files : ['test/*.js'],
-                tasks : ['jshint:test', 'test']
-            },
-            grunt : {
-                files : ['Gruntfile.js'],
-                tasks : ['jshint:core']
-            }
-        }
-    });
+        src : ["test/*.js"]
+      }
+    },
+    jshint : {
+      core : ["Gruntfile.js"],
+      test : ["test/*.js"],
+      lib : ["lib/*.js"],
+      options : {
+        jshintrc : true
+      }
+    },
+    jscs : {
+      lib : {
+        src : "lib/*.js",
+      },
+      test : {
+        src : "test/*.js"
+      },
+      misc : {
+        src : ["Gruntfile.js"]
+      },
+      options : {
+        config : ".jscsrc"
+      }
+    },
+    watch : {
+      lib : {
+        files : ["lib/*.js"],
+        tasks : ["jshint:lib", "jscs:lib", "test"]
+      },
+      test : {
+        files : ["test/*.js"],
+        tasks : ["jshint:test", "jscs:test", "test"]
+      },
+      grunt : {
+        files : ["Gruntfile.js"],
+        tasks : ["jshint:core", "jscs:misc"]
+      }
+    }
+  });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-mocha-test');
-    
-    grunt.registerTask('test', 'mochaTest');
-    grunt.registerTask('lint', 'jshint');
+  grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-mocha-test");
+  grunt.loadNpmTasks("grunt-jscs");
 
-    grunt.registerTask('default', ['lint', 'test']);
+  grunt.registerTask("test", "mochaTest");
+  grunt.registerTask("lint", "jshint");
 
-    grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.registerTask("default", ["lint", "jscs", "test"]);
+
+  grunt.loadNpmTasks("grunt-contrib-watch");
 };

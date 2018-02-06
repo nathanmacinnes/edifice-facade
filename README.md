@@ -1,63 +1,69 @@
 edifice-facade
 ==============
 
-Create facades to separate modules in your application.
-
-Facades rely on a core which can be as simple as an EventEmitter. They separate
-modules from each other, and the modules communicate using events. It also
-enhances internal application security, ensuring nothing has more in scope than
-it needs.
+We can connect different parts of an application with an EventEmitter. Let's
+call this the `core`.
 
 ````js
-var EventEmitter = require("events").EventEmitter,
-    Facade = require("edifice-facade");
-
-var core = new EventEmitter();
-
-var timerFacade = new Facade(core);
-var userInterfaceFacade = new Facade(core);
-````
-
-Now pass these facades to your `timer` and `userInterface`, so they
-don't need to have each other or the core itself in scope.
-
-````js
-function userInterface(facade) {
-  timerUserEntry.onchange = function () {
-    facade.emit('timerValueChange', this.value);
-  };
-  facade.on('timerValueChange', function (timerVal) {
-    timerUserEntry.value = timerVal;
+function initUserInterface(core) {
+  form.onsubmit((data) => {
+    core.emit("contentupdate", data);
   });
 }
 ````
-Facades don't respond to their own events, only events from other facades,
-allowing the same data to be updated and read my multiple sources, while
-preventing loops or awkward if statements.
 
-Module permissions
-------------------
-Facades can be restricted in what events they can send and receive.
+If a `contentupdate` can also come from a database update, we want to listen for
+these in the user interface module. This can cause an annoying event loop.
 
 ````js
-var fileSystemFacade = new Facade(core, {
-  emit : ['writeSuccess', 'fileContents'],
-  on : ['save', 'read']
-});
-
-// This line will throw an error, as fileSystemFacade doesn't have receive (on)
-// permissions on userInteraction.
-fileSystemFacade.on('userInteraction', function () { ... });
-
-// This line will also throw, as fileSystemFacade doesn't have send (emit)
-// permissions on save. It should be doing the saving!
-fileSystemFacade.emit('save', data);
+function initUserInterface(core) {
+  form.onsubmit((data) => {
+    core.emit("contentupdate", data);
+  }
+  core.on("contentupdate", (data) => {
+    form.update(data);
+  });
+}
 ````
+
+Facades create a separate "view" of the core for each module. Facades don't fire
+their own events, only those of other facades.
+
+````js
+const EventEmitter = require("events").EventEmitter;
+const Facade = require("edifice-facade");
+
+const core = new EventEmitter();
+const dbFacade = new Facade(core);
+const uiFacade = new Facade(core);
+````
+
+But we don't want the database module firing an `"alertuser"` event. We create
+internal application security with permissions.
+
+````js
+const dbFacade = new Facade(core, {
+  on : ["contentupdate", "contentexpiry", "userloginattempt"],
+  emit : ["contentupdate", "userloginsuccess", "userloginfailure"]
+});
+````
+
+Now all that's left is to pass your facades to each of your modules.
+````js
+require("./userInterface").init(uiFacade);
+````
+
+Top tips:
+* Make sure that each module has only the bits in scope that it needs. Your
+  central app module should intialise the core and facades, and then pass the
+  facades to the other modules.
+* Each event should have a documented arguments list.
 
 Why the name edifice-facade?
 ----------------------------
 I originally planned on making a module called edifice as the core, then
 realised the core could just be a plain old EventEmitter. So ediface is no more.
+Long live facade.
 
 License
 -------
