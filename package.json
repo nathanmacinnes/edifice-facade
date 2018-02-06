@@ -1,6 +1,6 @@
 {
   "name": "edifice-facade",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Create facades to separate modules in your application",
   "main": "lib/facade.js",
   "scripts": {
