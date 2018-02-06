@@ -9,27 +9,25 @@ const
 describe("Facade", () => {
   let Facade,
     core,
-    coreListener;
+    listener;
   beforeEach(() => {
     core = new EventEmitter();
-    coreListener = pretendr();
-    core.on("a", coreListener.mock);
+    listener = pretendr();
+    core.on("a", listener.mock);
+    Facade = injectr("../lib/facade.js").Facade;
   });
   describe("#emit", () => {
-    beforeEach(() => {
-      Facade = injectr("../lib/facade.js").Facade;
-    });
     it("passes events to the core", () => {
       const facade = new Facade(core);
       facade.emit("a");
-      expect(coreListener.calls).to.have.length(1);
+      expect(listener.calls).to.have.length(1);
     });
     it("passes arguments to the core", () => {
       const
         args = [{}, [], "f"],
         facade = new Facade(core);
       facade.emit("a", args[0], args[1], args[2]);
-      expect(coreListener.calls[0].args).to.have.property(0, args[0])
+      expect(listener.calls[0].args).to.have.property(0, args[0])
         .and.to.have.property(1, args[1])
         .and.to.have.property(2, args[2]);
     });
@@ -51,11 +49,6 @@ describe("Facade", () => {
     });
   });
   describe("#on", () => {
-    let listener;
-    beforeEach(() => {
-      Facade = injectr("../lib/facade.js").Facade;
-      listener = pretendr(() => {});
-    });
     it("listens for events on the core", () => {
       const facade = new Facade(core);
       facade.on("b", listener.mock);
@@ -93,16 +86,10 @@ describe("Facade", () => {
     });
   });
   describe("pair of facades", () => {
-    let
-      facades,
-      listener;
-    beforeEach(() => {
-      Facade = injectr("../lib/facade.js").Facade;
-      listener = pretendr(() => {});
-      facades = [new Facade(core), new Facade(core)];
-    });
     it("will pass all arguments between them", () => {
-      const args = [{}, [], "3"];
+      const
+        args = [{}, [], "3"],
+        facades = [new Facade(core), new Facade(core)];
       facades[0].on("a", listener.mock);
       facades[1].emit("a", args[0], args[1], args[2]);
       expect(listener.calls[0].args)
