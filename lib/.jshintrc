@@ -19,5 +19,5 @@
   "unused" : true,
   "trailing" : true,
   "maxlen" : 80,
-  "esversion" : 6
+  "esversion" : 5
 }

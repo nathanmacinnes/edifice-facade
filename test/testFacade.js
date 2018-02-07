@@ -13,10 +13,14 @@ describe("Facade", () => {
   beforeEach(() => {
     core = new EventEmitter();
     listener = pretendr();
-    core.on("a", listener.mock);
-    Facade = injectr("../lib/facade.js").Facade;
+    Facade = injectr("../lib/facade.js", {}, {
+      console : console
+    }).Facade;
   });
   describe("#emit", () => {
+    beforeEach(() => {
+      core.on("a", listener.mock);
+    });
     it("is chainable", () => {
       const facade = new Facade(core);
       expect(facade.emit("a")).to.equal(facade);
@@ -55,19 +59,30 @@ describe("Facade", () => {
   describe("#on", () => {
     it("is chainable", () => {
       const facade = new Facade(core);
-      expect(facade.on("a")).to.equal(facade);
+      expect(facade.on("a", () => {})).to.equal(facade);
     });
     it("listens for events on the core", () => {
       const facade = new Facade(core);
       facade.on("b", listener.mock);
       core.emit("b");
-      expect(listener.calls).to.have.length(1);
+      core.emit("b");
+      expect(listener.calls).to.have.length(2);
     });
     it("does not listen for events created by own emit", () => {
       const facade = new Facade(core);
       facade.on("c", listener.mock);
       facade.emit("c");
       expect(listener.calls).to.have.length(0);
+    });
+    it("uses multiple listeners once each", () => {
+      const
+        facade = new Facade(core),
+        listener2 = pretendr();
+      facade.on("a", listener.mock);
+      facade.on("a", listener2.mock);
+      core.emit("a");
+      expect(listener.calls).to.have.length(1);
+      expect(listener2.calls).to.have.length(1);
     });
     it("has arguments passed from the core", () => {
       const arg = {},
@@ -81,7 +96,7 @@ describe("Facade", () => {
         on : []
       });
       expect(() => {
-        facade.on("a");
+        facade.on("a", () => {});
       }).to.throwError(/Event 'a' not in 'on' array/);
     });
     it("doesn't throw an error when events are in the 'on' array", () => {
@@ -89,8 +104,86 @@ describe("Facade", () => {
         on : ["a"]
       });
       expect(() => {
-        facade.on("a");
+        facade.on("a", () => {});
       }).not.to.throwError();
+    });
+  });
+  describe("#once", () => {
+    it("is chainable", () => {
+      const facade = new Facade(core);
+      expect(facade.once("a", () => {})).to.equal(facade);
+    });
+    it("listens once for events on the core", () => {
+      const facade = new Facade(core);
+      facade.once("b", listener.mock);
+      core.emit("b");
+      core.emit("b");
+      expect(listener.calls).to.have.length(1);
+    });
+    it("does not listen for events created by own emit", () => {
+      const facade = new Facade(core);
+      facade.once("c", listener.mock);
+      facade.emit("c");
+      expect(listener.calls).to.have.length(0);
+    });
+    it("has arguments passed from the core", () => {
+      const arg = {},
+        facade = new Facade(core);
+      facade.once("c", listener.mock);
+      core.emit("c", arg);
+      expect(listener.calls[0].args[0]).to.equal(arg);
+    });
+    it("continues listening after own emit", () => {
+      const facade = new Facade(core);
+      facade.once("c", listener.mock);
+      facade.emit("c");
+      core.emit("c");
+      expect(listener.calls).to.have.length(1);
+    });
+    it("throws an error when events aren't in the 'on' array", () => {
+      const facade = new Facade(core, {
+        on : []
+      });
+      expect(() => {
+        facade.once("a", () => {});
+      }).to.throwError(/Event 'a' not in 'on' array/);
+    });
+    it("doesn't throw an error when events are in the 'on' array", () => {
+      const facade = new Facade(core, {
+        on : ["a"]
+      });
+      expect(() => {
+        facade.once("a", () => {});
+      }).not.to.throwError();
+    });
+  });
+  describe("#removeListener", () => {
+    it("is chainable", () => {
+      const facade = new Facade(core);
+      expect(facade.removeListener("a", () => {})).to.equal(facade);
+    });
+    it("removes the specified listener", () => {
+      const facade = new Facade(core);
+      facade.on("b", listener.mock);
+      facade.removeListener("b", listener.mock);
+      core.emit("b");
+      expect(listener.calls).to.have.length(0);
+    });
+    it("leaves other listeners alone", () => {
+      const
+        facade = new Facade(core),
+        listener2 = pretendr(),
+        listener3 = pretendr();
+      facade
+        .on("a", listener.mock)
+        .on("b", listener2.mock)
+        .on("a", listener3.mock)
+       .removeListener("a", listener.mock);
+      core.emit("a");
+      core.emit("b");
+      expect(listener.calls).to.have.length(0);
+      expect(listener2.calls).to.have.length(1);
+      expect(listener3.calls).to.have.length(1);
     });
   });
 });
