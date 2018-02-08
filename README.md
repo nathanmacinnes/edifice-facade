@@ -1,5 +1,6 @@
 edifice-facade
 ==============
+![Travis Build Status](https://api.travis-ci.org/nathanmacinnes/edifice-facade.svg?branch=master)
 
 We can connect different parts of an application with an EventEmitter. Let's
 call this the `core`.
