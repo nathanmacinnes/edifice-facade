@@ -211,5 +211,18 @@ describe("Facade", () => {
       facades[1].emit("a");
       expect(listener.calls).to.have.length(1);
     });
+    it("copies the arguments exactly between them", () => {
+      const argsSent = [{}, {}, {}];
+      let argsReceived;
+      facades[0].on("a", function() {
+        argsReceived = arguments;
+      });
+      facades[1].emit.apply(facades[1], ["a"].concat(argsSent));
+      expect(argsReceived)
+        .to.have.length(3)
+        .and.to.have.property(0, argsSent[0])
+        .and.to.have.property(1, argsSent[1])
+        .and.to.have.property(2, argsSent[2]);
+    });
   });
 });
