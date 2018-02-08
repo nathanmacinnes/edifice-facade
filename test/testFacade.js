@@ -214,7 +214,7 @@ describe("Facade", () => {
     it("copies the arguments exactly between them", () => {
       const argsSent = [{}, {}, {}];
       let argsReceived;
-      facades[0].on("a", function() {
+      facades[0].on("a", function () {
         argsReceived = arguments;
       });
       facades[1].emit.apply(facades[1], ["a"].concat(argsSent));
