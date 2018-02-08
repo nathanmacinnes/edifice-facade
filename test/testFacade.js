@@ -45,7 +45,7 @@ describe("Facade", () => {
       });
       expect(() => {
         facade.emit("a");
-      }).to.throwError(/Event 'a' not in 'emit' array/);
+      }).to.throwError(/Event 'a' not permitted by this facade./);
     });
     it("doesn't throw an error when events are in the emit array", () => {
       const facade = new Facade(core, {
@@ -97,7 +97,7 @@ describe("Facade", () => {
       });
       expect(() => {
         facade.on("a", () => {});
-      }).to.throwError(/Event 'a' not in 'on' array/);
+      }).to.throwError(/Event 'a' not permitted by this facade./);
     });
     it("doesn't throw an error when events are in the 'on' array", () => {
       const facade = new Facade(core, {
@@ -146,7 +146,7 @@ describe("Facade", () => {
       });
       expect(() => {
         facade.once("a", () => {});
-      }).to.throwError(/Event 'a' not in 'on' array/);
+      }).to.throwError(/Event 'a' not permitted by this facade./);
     });
     it("doesn't throw an error when events are in the 'on' array", () => {
       const facade = new Facade(core, {
@@ -184,6 +184,24 @@ describe("Facade", () => {
       expect(listener.calls).to.have.length(0);
       expect(listener2.calls).to.have.length(1);
       expect(listener3.calls).to.have.length(1);
+    });
+  });
+  describe("pair of facades", () => {
+    const facades = [];
+    beforeEach(() => {
+      let i = 2;
+      facades.splice(0);
+      while (i--) {
+        facades.push(new Facade(core));
+      }
+    });
+    it("ping-pongs events", () => {
+      facades[0].on("a", () => {
+        facades[0].emit("b");
+      });
+      facades[1].on("b", listener.mock);
+      facades[1].emit("a");
+      expect(listener.calls).to.have.length(1);
     });
   });
 });
