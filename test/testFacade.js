@@ -203,5 +203,13 @@ describe("Facade", () => {
       facades[1].emit("a");
       expect(listener.calls).to.have.length(1);
     });
+    it("ping-pongs events with the same name", () => {
+      facades[0].on("a", () => {
+        facades[0].emit("a");
+      });
+      facades[1].on("a", listener.mock);
+      facades[1].emit("a");
+      expect(listener.calls).to.have.length(1);
+    });
   });
 });
